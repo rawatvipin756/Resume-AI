@@ -13,7 +13,7 @@ app.get("/api/test",(req,res)=> {
   });
 });
 
-app.post("api/chat",(req,res)=> {
+app.post("/api/chat",(req,res)=> {
   const question=req.body.question;
   res.json({
     message:"Question recieved successfully",
