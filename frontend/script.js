@@ -2,6 +2,8 @@ let inputText=document.getElementById("question");
 let sendBtn=document.getElementById("sendBtn");
 let chat=document.getElementById("chatBox");
 
+let conversationHistory = [];
+
 sendBtn.addEventListener("click",()=> {
   if(inputText.value.trim() === ""){
     return;
@@ -13,23 +15,35 @@ sendBtn.addEventListener("click",()=> {
   userMessage.innerText=question;
   chat.appendChild(userMessage);
 
+  conversationHistory.push({
+    role: "user",
+    content: question
+  });
+
   fetch("http://localhost:5000/api/chat",{
     method:"POST",
     headers:{
       "Content-Type":"application/json"
     },
     body:JSON.stringify({
-      question:question
+      question:question,
+      history:conversationHistory.slice(0,-1)
     })
   })
   .then((response)=> {
     return response.json();
-  }).then((data)=> {
-    console.log(data.message);
-    console.log(data.question);
+  })
+  .then((data)=> {
     let botMessage=document.createElement("p");
-    botMessage.innerText=data.message;
+    botMessage.innerText=data.answer;
+    conversationHistory.push({
+      role: "assistant",
+      content: data.answer
+    });
     chat.appendChild(botMessage);
+  })
+  .catch((error)=> {
+    console.error("Chat error:",error);
   })
 
   inputText.value="";

@@ -2,7 +2,10 @@ const express=require("express");
 const cors=require("cors");
 const axios=require("axios")
 
+let conversationHistory = [];
+
 const app=express();
+
 app.use(cors());
 app.use(express.json());
 
@@ -16,14 +19,17 @@ app.get("/api/test",(req,res)=> {
 
 app.post("/api/chat",async (req,res)=> {
   try{
-    const question=req.body.question;
+    const {question,history=[]}=req.body;
     const response=await axios.post(
       "http://127.0.0.1:8000/api/chat",
-      {question:question}
+      {
+        question:question,
+        history:history
+      }
     );
     res.json(response.data);
   }catch(error){
-    console.log(error.message);
+    console.log("Python server Error : ",error.message);
     res.status(500).json({
       message:"Error communicating with Python service"
     });
