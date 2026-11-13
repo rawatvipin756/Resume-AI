@@ -1,0 +1,11 @@
+[project]
+name = "pythonchatbot"
+version = "0.1.0"
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi>=0.162.5",
+    "groq>=1.7.0",
+    "pymupdf>=2.1",
+    "python-dotenv>=1.2.4",
+    "uvicorn>=0.54.0",
+]
