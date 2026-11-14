@@ -4,56 +4,83 @@ let chat=document.getElementById("chatBox");
 
 let conversationHistory = [];
 
-sendBtn.addEventListener("click",()=> {
-  if(inputText.value.trim() === ""){
-    return;
-  }
 
-  const question=inputText.value.trim();
+sendBtn.addEventListener("click", async () => {
 
-  if(!question) return;
+    const question = inputText.value.trim();
 
-  const userMessage=document.createElement("p");
-  userMessage.innerText=question;
-  chat.appendChild(userMessage);
+    if (!question) return;
 
-  let fullAns="";
+    // Display user message
+    const userMessage = document.createElement("p");
+    userMessage.innerText = question;
+    chat.appendChild(userMessage);
 
-  try{}
-
-  conversationHistory.push({
-    role: "user",
-    content: question
-  });
-
-  fetch("http://localhost:5000/api/chat",{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json"
-    },
-    body:JSON.stringify({
-      question:question,
-      history:conversationHistory.slice(0,-1)
-    })
-  })
-  .then((response)=> {
-    return response.json();
-  })
-  .then((data)=> {
-    let botMessage=document.createElement("p");
-    botMessage.innerText=data.answer;
+    // Store user message in conversation history
     conversationHistory.push({
-      role: "assistant",
-      content: data.answer
+        role: "user",
+        content: question
     });
-    chat.appendChild(botMessage);
-  })
-  .catch((error)=> {
-    console.error("Chat error:",error);
-  })
 
-  inputText.value="";
+    inputText.value = "";
+
+    // Create chatbot message
+    const botMessage = document.createElement("p");
+    botMessage.innerText = "";
+    chat.appendChild(botMessage);
+
+    let fullAnswer = "";
+
+    try {
+        const response = await fetch("http://localhost:5000/api/chat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                question: question,
+                history: conversationHistory.slice(0, -1)
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to get chatbot response");
+        }
+
+        if (!response.body) {
+            throw new Error("Response stream is unavailable");
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        while (true) {
+            const { done, value } = await reader.read();
+
+            if (done) break;
+
+            const chunk = decoder.decode(value, {
+                stream: true
+            });
+
+            fullAnswer += chunk;
+            botMessage.innerText = fullAnswer;
+        }
+
+        fullAnswer += decoder.decode();
+        botMessage.innerText = fullAnswer;
+
+        conversationHistory.push({
+            role: "assistant",
+            content: fullAnswer
+        });
+
+    } catch (error) {
+        console.error("Chat error:", error);
+        botMessage.innerText = "Sorry, something went wrong. Please try again.";
+    }
 });
+
 
 fetch("http://localhost:5000/api/test")
 .then((response)=> {
