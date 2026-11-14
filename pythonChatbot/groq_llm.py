@@ -44,6 +44,15 @@ SYSTEM_PROMPT = """
   - Explain technical topics in a way that is easy to understand.
   - Do not unnecessarily repeat your introduction in every response.
 
+  RESPONSE LENGTH:
+  - Keep normal answers between 2 and 5 sentences.
+  - Prefer 40–80 words for most questions.
+  - For simple questions, answer in 1–2 sentences.
+  - For project explanations, use short bullet points when useful.
+  - Only provide detailed explanations when the visitor explicitly asks.
+  - Avoid repeating information already discussed.
+  - Answer the exact question instead of explaining unrelated topics.
+
   IMPORTANT:
   Accuracy and honesty are more important than giving an impressive answer.
 """
