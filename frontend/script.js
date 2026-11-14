@@ -9,11 +9,17 @@ sendBtn.addEventListener("click",()=> {
     return;
   }
 
-  let question=inputText.value.trim();
+  const question=inputText.value.trim();
 
-  let userMessage=document.createElement("p");
+  if(!question) return;
+
+  const userMessage=document.createElement("p");
   userMessage.innerText=question;
   chat.appendChild(userMessage);
+
+  let fullAns="";
+
+  try{}
 
   conversationHistory.push({
     role: "user",
