@@ -147,7 +147,9 @@ function addMessage(role, content) {
         message.classList.add("bot-message");
     }
 
-    message.innerText = content;
+    message.innerText = content
+    .replace(/\*\*/g, "")
+    .replace(/\*/g, "");
 
     chat.appendChild(message);
 
@@ -270,14 +272,14 @@ async function sendMessage() {
 
             fullAnswer += chunk;
 
-            botMessage.innerText = fullAnswer;
+            botMessage.innerText = fullAnswer.replace(/\*\*/g, "").replace(/\*/g, "");
 
             chat.scrollTop = chat.scrollHeight;
         }
 
         fullAnswer += decoder.decode();
 
-        botMessage.innerText = fullAnswer;
+        botMessage.innerText = fullAnswer.replace(/\*\*/g, "").replace(/\*/g, "");
 
         // Save AI response
         conversation.messages.push({
